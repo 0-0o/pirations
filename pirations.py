@@ -17,15 +17,13 @@ search = urllib.parse.quote(input(f"[{colorama.Fore.RED}?{colorama.Fore.RESET}] 
 
 def getHash(types, id, szn=None, ep=None):
     if types == "tv":
-        r = requests.get(f"https://vidsrc.pro/embed/tv/{id}/{szn}/{ep}",headers=HEADERS)
-        if r.status_code != 200:
-            exit('Show not found.')
-        return json.loads(decode(json.loads(re.findall(r"{.+}",r.content.decode('utf-8'))[0])['hash']))[0]['hash']
+        url=f"https://vidsrc.pro/embed/tv/{id}/{szn}/{ep}"
     elif types == "movie":
-        r = requests.get(f"https://vidsrc.pro/embed/movie/{id}",headers=HEADERS)
-        if r.status_code != 200:
-            exit('Movie not found.')
-        return json.loads(decode(json.loads(re.findall(r"{.+}",r.content.decode('utf-8'))[0])['hash']))[0]['hash']
+        url = f"https://vidsrc.pro/embed/movie/{id}"
+    r = requests.get(url,headers=HEADERS)
+    if r.status_code != 200:
+        exit('Show/Movie not found.')
+    return json.loads(decode(json.loads(re.findall(r"{.+}",r.content.decode('utf-8'))[0])['hash']))[0]['hash']
 
 def decode(str: str):
     try:
