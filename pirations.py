@@ -5,7 +5,6 @@ BASE_URL = "https://api.themoviedb.org/3"
 SEARCH_URI = "/search/multi?query={0}&language=en-US&page=1&api_key={1}"
 TV_URI = "/tv/{0}"
 ENDING_URI = "?language=en-US&api_key={0}"
-OUT_FILE = "video_maybe.mp4"
 HEADERS = {"sec-fetch-dest": "iframe","referer": "https://soapertv.cc/","Host": "vidsrc.pro"}
 
 if not os.path.exists(os.getcwd()+"/bin/"):
@@ -37,7 +36,7 @@ def decode(str: str):
 def download(hashr, selection, sznSelect=None, epSelect=None):
     r = requests.get(f"https://vidsrc.pro/api/e/{hashr}",headers=HEADERS)
 
-    findr = re.findall(r"url=.+",r.json()['source'])#[0].replace('url=',''))
+    findr = re.findall(r"url=.+",r.json()['source'])
     if len(findr) == 0:
         url = r.json()['source'].replace("https://vidsrc.pro/api/proxy/viper/","https://ae.bigtimedelivery.net/").split(".png?")[0]
     else:
@@ -103,5 +102,3 @@ elif selection['media_type'] == "movie":
     hashr = getHash(selection['media_type'], selection['id'])
 
     download(hashr, selection)
-
-#open(OUT_FILE,"wb").write(requests.get(r.json()['source'], headers=h).content)
