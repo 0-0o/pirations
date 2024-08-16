@@ -1,4 +1,4 @@
-import requests, urllib.parse, base64, json, re, colorama, os, time
+import requests, urllib.parse, base64, json, re, colorama, os
 
 API_KEY = "71deea7ba87c519ac04704906a9114ac"
 BASE_URL = "https://api.themoviedb.org/3"
