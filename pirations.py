@@ -5,6 +5,7 @@ BASE_URL = "https://api.themoviedb.org/3"
 SEARCH_URI = "/search/multi?query={0}&language=en-US&page=1&api_key={1}"
 TV_URI = "/tv/{0}"
 ENDING_URI = "?language=en-US&api_key={0}"
+OUT_FILE = "video_maybe.mp4"
 HEADERS = {"sec-fetch-dest": "iframe","referer": "https://soapertv.cc/","Host": "vidsrc.pro"}
 
 if not os.path.exists(os.getcwd()+"/bin/"):
@@ -14,6 +15,20 @@ os.system("cls")
 
 print(f"[{colorama.Fore.YELLOW}!{colorama.Fore.RESET}] Please enter a show/movie name.")
 search = urllib.parse.quote(input(f"[{colorama.Fore.RED}?{colorama.Fore.RESET}] "))
+
+def calcFileSize(extinfData):
+    reStr = r"#EXTINF:(.*),"
+    extinfStrs = re.findall(reStr, extinfData)
+    totalSize = 0.0
+    byetrate = (1984/1000)/8 # its divided by 1000 to move from Kbps to Mbps, end result is in MB
+    for len in extinfStrs:
+        totalSize += float(len)*byetrate 
+    print(f"[{colorama.Fore.YELLOW}!{colorama.Fore.RESET}] End file size will be about {round(totalSize)}MB.")
+    print(f"[{colorama.Fore.YELLOW}!{colorama.Fore.RESET}] Do you want to proceed? [y/n]")
+    userinput = input(f"[{colorama.Fore.RED}?{colorama.Fore.RESET}] ")
+    if not userinput.lower() in ["yes","y"]:
+        exit()
+
 
 def getHash(types, id, szn=None, ep=None):
     if types == "tv":
@@ -34,13 +49,14 @@ def decode(str: str):
 def download(hashr, selection, sznSelect=None, epSelect=None):
     r = requests.get(f"https://vidsrc.pro/api/e/{hashr}",headers=HEADERS)
 
-    findr = re.findall(r"url=.+",r.json()['source'])
+    findr = re.findall(r"url=.+",r.json()['source'])#[0].replace('url=',''))
     if len(findr) == 0:
         url = r.json()['source'].replace("https://vidsrc.pro/api/proxy/viper/","https://ae.bigtimedelivery.net/").split(".png?")[0]
     else:
         url = findr[0].replace('url=','')
     if match := re.search(r"#EXT-X-STREAM-INF:PROGRAM-ID=1,BANDWIDTH=4500000,RESOLUTION=1920x1080\n(.+)",requests.get(url).content.decode('utf-8')):
         data = requests.get(match.group(1)).content.decode('utf-8')
+        calcFileSize(data)
         title = cx if not ':' in (cx:=selection['name' if 'name' in selection else 'title']) else cx.replace(":","")
         open(f"bin/{title} S{sznSelect}EP{epSelect}.mpeg","w").write("") if selection['media_type'] == "tv" else open(f"bin/{title}.mpeg","w").write("")
         datlist = re.findall(r",\n.+", data)
@@ -100,3 +116,5 @@ elif selection['media_type'] == "movie":
     hashr = getHash(selection['media_type'], selection['id'])
 
     download(hashr, selection)
+
+#open(OUT_FILE,"wb").write(requests.get(r.json()['source'], headers=h).content)
