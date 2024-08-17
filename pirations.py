@@ -5,7 +5,6 @@ BASE_URL = "https://api.themoviedb.org/3"
 SEARCH_URI = "/search/multi?query={0}&language=en-US&page=1&api_key={1}"
 TV_URI = "/tv/{0}"
 ENDING_URI = "?language=en-US&api_key={0}"
-OUT_FILE = "video_maybe.mp4"
 HEADERS = {"sec-fetch-dest": "iframe","referer": "https://soapertv.cc/","Host": "vidsrc.pro"}
 
 if not os.path.exists(os.getcwd()+"/bin/"):
@@ -116,5 +115,3 @@ elif selection['media_type'] == "movie":
     hashr = getHash(selection['media_type'], selection['id'])
 
     download(hashr, selection)
-
-#open(OUT_FILE,"wb").write(requests.get(r.json()['source'], headers=h).content)
