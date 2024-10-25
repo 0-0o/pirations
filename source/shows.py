@@ -51,10 +51,10 @@ class Show:
 
                 for i,url in enumerate(urlsList):
                     mpegDataSlice = requests.get(url.replace(",\n",""), headers=HEADERS).content
-                    open(f"{parentFolder}/{showName}.mpeg","ab").write(mpegDataSlice)
+                    open(f"{parentFolder}/{showName} S{self.season}E{self.episode}.mpeg","ab").write(mpegDataSlice)
                     if printDownloadInfo:
                         downloadBar.update(i+1,f"{round((((i+1)/(len(urlsList))) * 100), 1)}%")
 
-                return {"success":True, "path": os.path.abspath(os.getcwd())+f"\\bin\\{showName}.mpeg"}
+                return {"success":True, "path": os.path.abspath(os.getcwd())+f"\\bin\\{showName} S{self.season}E{self.episode}.mpeg"}
         except: 
             exit("File path specified is not writable.") 
